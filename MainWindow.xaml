@@ -1,0 +1,69 @@
+﻿<Window x:Class="eindopdracht.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:eindopdracht"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <ScrollViewer>
+            <TabControl x:Name="grud">
+                <TabItem Header="wetenschapper">
+                    <StackPanel>
+                        <TextBlock Margin="5,10,0,0">lijst van wetenschappers:</TextBlock>
+                        <ListBox x:Name="lijst_wetenschappers" Height="100" SelectionChanged="lijst_wetenschappers_SelectionChanged"></ListBox>
+                        <TextBlock Margin="5,25,0,0">naam wetenschapper :</TextBlock>
+                        <TextBox x:Name="tbx_wetenschapper" Height="30" Padding="5" TextChanged="tbx_wetenschapper_TextChanged"></TextBox>
+                        <StackPanel Height="100" Margin="0,50,0,0" Orientation="Horizontal">
+                            <Button x:Name="add_wetenschapper" Height="100" Width="100" Margin="50,0,0,0" Click="add_wetenschapper_Click">add</Button>
+                            <Button x:Name="delete_wetenschapper" Width="100" Margin="25,0,0,0" Click="delete_wetenschapper_Click">delete</Button>
+                            <Button x:Name="update_wetenschapper" Width="100" Margin="25,0,0,0" Click="update_wetenschapper_Click">update</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="project" HorizontalAlignment="Left" Width="49">
+                    <StackPanel>
+                        <TextBlock Margin="5,10,0,0">lijst van projecten:</TextBlock>
+                        <ListBox x:Name="lijst_projecten" Height="100" SelectionChanged="lijst_projecten_SelectionChanged"></ListBox>
+                        <TextBlock Margin="5,25,0,0">naam project:</TextBlock>
+                        <TextBox x:Name="tbx_naam_project" Height="30" Padding="5" TextChanged="tbx_naam_project_TextChanged"></TextBox>
+                        <TextBlock Margin="5,5,0,0">aantal uren:</TextBlock>
+                        <TextBox x:Name="tbx_aantal_uren" Height="30" Padding="5" TextChanged="tbx_aantal_uren_TextChanged"></TextBox>
+                        <StackPanel Height="100" Margin="0,20,0,0" Orientation="Horizontal">
+                            <Button x:Name="add_project" Height="100" Width="100" Margin="50,0,0,0" Click="add_project_Click">add</Button>
+                            <Button x:Name="delete_project" Height="100" Width="100" Margin="25,0,0,0" Click="delete_project_Click">delete</Button>
+                            <Button x:Name="update_project" Height="100" Width="100" Margin="25,0,0,0" Click="update_project_Click">update</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="toegewezen">
+                    <StackPanel>
+                        <TextBlock Margin="5,10,0,0">naam wetenschapper:</TextBlock>
+                        <ComboBox x:Name="cmb_naam_wetenschapper" Margin="5,5,0,0" Width="150" HorizontalAlignment="Left" SelectionChanged="cmb_naam_wetenschapper_SelectionChanged"></ComboBox>
+                        <TextBlock Margin="5,10,0,0">naam project:</TextBlock>
+                        <ComboBox x:Name="cmb_naam_project" Margin="5,5,0,0" Width="150" HorizontalAlignment="Left" SelectionChanged="cmb_naam_project_SelectionChanged"></ComboBox>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5,10,0,0">wetenschapper to project:</TextBlock>
+                            <TextBlock Margin="250,10,0,0">project to wetenschapper:</TextBlock>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <ListBox Margin="5,5,0,0" x:Name="lbx_wetnschapper_to_project" Height="100" Width="200"></ListBox>
+                            <Button x:Name="delete_project_to_wetenschapper" Height="25" Margin="5,0,0,0" VerticalAlignment="Bottom" Background="red" Click="delete_project_to_wetenschapper_Click">delete project</Button>
+                            <ListBox x:Name="lbx_project_to_wetenschapper" Height="100" Width="200" Margin="110,5,0,0"></ListBox>
+                            <Button x:Name="delete_wetenschapper_to_project" Height="25" Margin="5,0,0,0" VerticalAlignment="Bottom" Background="Red" Click="delete_wetenschapper_to_project_Click">delete wetenschapper</Button>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Margin="5,55,0,5">wetenschapper:</TextBlock>
+                            <ComboBox x:Name="cmb_kiezen_naam_wetenschapper" Height="25" Width="100" VerticalAlignment="Bottom" Margin="5,20,0,0" SelectionChanged="cmb_kiezen_naam_wetenschapper_SelectionChanged"></ComboBox>
+                            <TextBlock Margin="5,55,0,0">gaat aan project</TextBlock>
+                            <ComboBox x:Name="cmb_kiezen_naam_project" Height="25" Width="100" Margin="5,20,0,0" VerticalAlignment="Bottom" SelectionChanged="cmb_kiezen_naam_project_SelectionChanged"></ComboBox>
+                            <TextBlock Margin="5,55,0,0">werken.</TextBlock>
+                            <Button x:Name="toewijzen" Height="25" Width="100" Margin="55,55,0,0" VerticalAlignment="Bottom" Background="LightGreen" Click="toewijzen_Click">toewijzen</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem>
+            </TabControl>
+        </ScrollViewer>
+    </Grid>
+</Window>
