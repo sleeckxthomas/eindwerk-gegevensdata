@@ -91,11 +91,11 @@ namespace eindopdracht
         {
             using(var db = new ShopContext())
             {
-                //wetenschappers = db.wetenschappers.ToList();
                 db.Remove((wetenschapper)lijst_wetenschappers.SelectedItem);
                 db.SaveChanges();
-                tbx_wetenschapper.Clear();
                 lijst_refresh(lijst_wetenschappers);
+                tbx_wetenschapper.Clear();
+
             }
         }
 
@@ -103,11 +103,17 @@ namespace eindopdracht
         {
             using (var db = new ShopContext())
             {
-                //wetenschappers = db.wetenschappers.ToList();
-                var wetenschapper = (wetenschapper)lijst_wetenschappers.SelectedItem;
-                Debug.WriteLine(wetenschapper);
+                bool wetenschapper_bestaat = wetenschappers.Exists(w => w.naam == tbx_wetenschapper.Text);
+                if (wetenschapper_bestaat)
+                {
+                    MessageBox.Show("wetenschapper staat er al in. geef achternaam als extra");
+                }
+                var w = (wetenschapper)lijst_wetenschappers.SelectedItem;
+                w.naam = tbx_wetenschapper.Text;
+                db.Update(w);
+                db.SaveChanges();
+                lijst_refresh(lijst_wetenschappers);
             }
-
         }
         public void lijst_refresh(ListBox gekozen_lijst)
         {
@@ -209,7 +215,23 @@ namespace eindopdracht
 
         private void update_project_Click(object sender, RoutedEventArgs e)
         {
-           //projecten = db.projecten.ToList();
+            using (var db =  new ShopContext())
+            {
+                var p = (project)lijst_projecten.SelectedItem;
+                bool project_bestaat = projecten.Exists(p => p.naam == tbx_naam_project.Text && p.uur == float.Parse(tbx_aantal_uren.Text));
+                if (project_bestaat)
+                {
+                    MessageBox.Show("project bestaat al");
+                }
+                else
+                {
+                    p.naam = tbx_naam_project.Text;
+                    p.uur = float.Parse(tbx_aantal_uren.Text);
+                    db.Update(p);
+                    db.SaveChanges();
+                }
+                lijst_refresh(lijst_projecten);
+            }
         }
         private void delete_project_to_wetenschapper_Click(object sender, RoutedEventArgs e)
         {
@@ -230,12 +252,7 @@ namespace eindopdracht
                 var wetenschapper_identity = db.wetenschappers.Where(w => w.naam == cmb_naam_wetenschapper.SelectedItem.ToString()).First();
                 var wetenschapper_id1 = wetenschapper_identity.wetenschapper_id;
                 var wetenschapper_projecten = db.toegewezenen.Where(i => i.wetenschapper_id == wetenschapper_id1);
-                foreach (var project in wetenschapper_projecten)
-                {
-                    var assignedproject = db.projecten.Where(i => i.project_id == project.project_id).First().naam.ToString();
-                    lbx_wetnschapper_to_project.Items.Add(assignedproject);
-                }
-                db.SaveChanges();
+                
             }
         }
         private void delete_wetenschapper_to_project_Click(object sender, RoutedEventArgs e)
@@ -269,7 +286,8 @@ namespace eindopdracht
         private void cmb_naam_wetenschapper_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             lbx_wetnschapper_to_project.Items.Clear();
-            using(var db = new ShopContext())
+
+            using (var db = new ShopContext())
             {
                 var wetenschapper_identity = db.wetenschappers.Where(w => w.naam == cmb_naam_wetenschapper.SelectedItem.ToString()).First();
                 var wetenschapper_id1 = wetenschapper_identity.wetenschapper_id;
