@@ -50,7 +50,7 @@
                         <StackPanel Orientation="Horizontal">
                             <ListBox Margin="5,5,0,0" x:Name="lbx_wetnschapper_to_project" Height="100" Width="200"></ListBox>
                             <Button x:Name="delete_project_to_wetenschapper" Height="25" Margin="5,0,0,0" VerticalAlignment="Bottom" Background="red" Click="delete_project_to_wetenschapper_Click">delete project</Button>
-                            <ListBox x:Name="lbx_project_to_wetenschapper" Height="100" Width="200" Margin="110,5,0,0"></ListBox>
+                            <ListBox x:Name="lbx_project_to_wetenschapper" Height="100" Width="200" Margin="105,5,0,0"></ListBox>
                             <Button x:Name="delete_wetenschapper_to_project" Height="25" Margin="5,0,0,0" VerticalAlignment="Bottom" Background="Red" Click="delete_wetenschapper_to_project_Click">delete wetenschapper</Button>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
