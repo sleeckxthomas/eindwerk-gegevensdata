@@ -108,14 +108,22 @@ namespace eindopdracht
                 {
                     MessageBox.Show("wetenschapper staat er al in. geef achternaam als extra");
                 }
-                var w = (wetenschapper)lijst_wetenschappers.SelectedItem;
-                w.naam = tbx_wetenschapper.Text;
-                cmb_naam_wetenschapper.Items.Remove(w);
-                db.Update(w);
-
-                db.SaveChanges();
+                else
+                {
+                    var w = (wetenschapper)lijst_wetenschappers.SelectedItem;
+                    w.naam = tbx_wetenschapper.Text;
+                    cmb_naam_wetenschapper.SelectedItem = w;
+                    db.Update(w);
+                    db.SaveChanges();
+                }
                 lijst_refresh(lijst_wetenschappers);
-                tbx_wetenschapper.Clear();
+                cmb_naam_wetenschapper.Items.Clear();
+                cmb_kiezen_naam_wetenschapper.Items.Clear();
+                foreach(var w in db.wetenschappers)
+                {
+                    cmb_naam_wetenschapper.Items.Add(w.naam);
+                    cmb_kiezen_naam_wetenschapper.Items.Add(w.naam);
+                }
             }
         }
         public void lijst_refresh(ListBox gekozen_lijst)
@@ -235,55 +243,75 @@ namespace eindopdracht
                     db.SaveChanges();
                 }
                 lijst_refresh(lijst_projecten);
+                cmb_naam_project.Items.Clear();
+                cmb_kiezen_naam_project.Items.Clear();
+                foreach (var pro in db.projecten)
+                {
+                    cmb_naam_project.Items.Add(pro.naam);
+                    cmb_kiezen_naam_project.Items.Add(pro.naam);
+                }
             }
         }
         private void delete_project_to_wetenschapper_Click(object sender, RoutedEventArgs e)
         {
             using (var db = new ShopContext())
             {
-                var selected_project = lbx_wetnschapper_to_project.SelectedItem.ToString();
-                var selected_wetenschapper = cmb_naam_wetenschapper.SelectedItem.ToString();
-                var selected_project_id = db.projecten.Where(p => p.naam == selected_project).First().project_id;
-                var selected_wetenschapper_id = db.wetenschappers.Where(w => w.naam == selected_wetenschapper).First().wetenschapper_id;
-
-                var toegewezen_projecten = db.toegewezenen.Where(t => t.project_id == selected_project_id && t.wetenschapper_id == selected_wetenschapper_id );
-                foreach (var project in toegewezen_projecten)
+                if(lbx_wetnschapper_to_project.SelectedItem == null)
                 {
-                    db.Remove((toegewezenen)project);
+                    MessageBox.Show("er zijn geen projecten toegewezen aan deze wetenschapper");
                 }
-                db.SaveChanges();
-                lbx_wetnschapper_to_project.Items.Clear();
-                var wetenschapper_identity = db.wetenschappers.Where(w => w.naam == cmb_naam_wetenschapper.SelectedItem.ToString()).First();
-                var wetenschapper_id1 = wetenschapper_identity.wetenschapper_id;
-                var wetenschapper_projecten = db.toegewezenen.Where(i => i.wetenschapper_id == wetenschapper_id1);
-                
+                else
+                {
+                    var selected_project = lbx_wetnschapper_to_project.SelectedItem.ToString();
+                    var selected_wetenschapper = cmb_naam_wetenschapper.SelectedItem.ToString();
+                    var selected_project_id = db.projecten.Where(p => p.naam == selected_project).First().project_id;
+                    var selected_wetenschapper_id = db.wetenschappers.Where(w => w.naam == selected_wetenschapper).First().wetenschapper_id;
+
+                    var toegewezen_projecten = db.toegewezenen.Where(t => t.project_id == selected_project_id && t.wetenschapper_id == selected_wetenschapper_id);
+                    foreach (var project in toegewezen_projecten)
+                    {
+                        db.Remove((toegewezenen)project);
+                    }
+                    db.SaveChanges();
+                    lbx_wetnschapper_to_project.Items.Clear();
+                    var wetenschapper_identity = db.wetenschappers.Where(w => w.naam == cmb_naam_wetenschapper.SelectedItem.ToString()).First();
+                    var wetenschapper_id1 = wetenschapper_identity.wetenschapper_id;
+                    var wetenschapper_projecten = db.toegewezenen.Where(i => i.wetenschapper_id == wetenschapper_id1);
+                }
             }
         }
         private void delete_wetenschapper_to_project_Click(object sender, RoutedEventArgs e)
         {
             using(var db = new ShopContext())
             {
-                var selected_wetenschapper = lbx_project_to_wetenschapper.SelectedItem.ToString();
-                var selected_project = cmb_naam_project.SelectedItem.ToString();
-                var selected_project_id = db.projecten.Where(p => p.naam == selected_project).First().project_id;
-                var selected_wetenschapper_id = db.wetenschappers.Where(w => w.naam == selected_wetenschapper).First().wetenschapper_id;
+                if(lbx_project_to_wetenschapper.SelectedItem == null)
+                {
+                    MessageBox.Show("er zijn geen wetenschappers toegewezen aan dit project");
+                }
+                else
+                {
+                    var selected_wetenschapper = lbx_project_to_wetenschapper.SelectedItem.ToString();
+                    var selected_project = cmb_naam_project.SelectedItem.ToString();
+                    var selected_project_id = db.projecten.Where(p => p.naam == selected_project).First().project_id;
+                    var selected_wetenschapper_id = db.wetenschappers.Where(w => w.naam == selected_wetenschapper).First().wetenschapper_id;
 
-                var toegewezen_wetenschappers = db.toegewezenen.Where(w => w.wetenschapper_id == selected_project_id && w.project_id == selected_project_id);
-                foreach(var wetenschapper in toegewezen_wetenschappers)
-                {
-                    db.Remove((toegewezenen)wetenschapper);
+                    var toegewezen_wetenschappers = db.toegewezenen.Where(w => w.wetenschapper_id == selected_project_id && w.project_id == selected_project_id);
+                    foreach (var wetenschapper in toegewezen_wetenschappers)
+                    {
+                        db.Remove((toegewezenen)wetenschapper);
+                    }
+                    db.SaveChanges();
+                    lbx_project_to_wetenschapper.Items.Clear();
+                    var project_identity = db.projecten.Where(p => p.naam == cmb_naam_project.SelectedItem.ToString()).First();
+                    var project_id1 = project_identity.project_id;
+                    var projecten_wetenschapper = db.toegewezenen.Where(i => i.project_id == project_id1);
+                    foreach (var wetenschapper in projecten_wetenschapper)
+                    {
+                        var assigned_wetenschapper = db.wetenschappers.Where(i => i.wetenschapper_id == wetenschapper.wetenschapper_id).First().naam.ToString();
+                        lbx_project_to_wetenschapper.Items.Add(assigned_wetenschapper);
+                    }
+                    db.SaveChanges();
                 }
-                db.SaveChanges();
-                lbx_project_to_wetenschapper.Items.Clear();
-                var project_identity = db.projecten.Where(p => p.naam == cmb_naam_project.SelectedItem.ToString()).First();
-                var project_id1 = project_identity.project_id;
-                var projecten_wetenschapper = db.toegewezenen.Where(i => i.project_id == project_id1);
-                foreach (var wetenschapper in projecten_wetenschapper)
-                {
-                    var assigned_wetenschapper = db.wetenschappers.Where(i => i.wetenschapper_id == wetenschapper.wetenschapper_id).First().naam.ToString();
-                    lbx_project_to_wetenschapper.Items.Add(assigned_wetenschapper);
-                }
-                db.SaveChanges();
             }
 
         }
@@ -360,11 +388,7 @@ namespace eindopdracht
                         db.SaveChanges();
                     }
                 }
-                //wetenschappers id
-                
 
-
-                //update listbox
                 if (cmb_naam_wetenschapper.SelectedIndex != -1)
                 {
                     lbx_wetnschapper_to_project.Items.Clear();
@@ -390,7 +414,6 @@ namespace eindopdracht
                     }
                 }
 
-                //clear comboboxes
                 cmb_kiezen_naam_wetenschapper.SelectedIndex = -1;
                 cmb_kiezen_naam_project.SelectedIndex = -1;
             }
