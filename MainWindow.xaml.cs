@@ -40,7 +40,6 @@ namespace eindopdracht
                     lijst_wetenschappers.Items.Add(wetenschapper);
                     cmb_naam_wetenschapper.Items.Add(wetenschapper.naam);
                     cmb_kiezen_naam_wetenschapper.Items.Add(wetenschapper.naam);
-
                 }
                 foreach(var project in db.projecten)
                 {
@@ -80,8 +79,8 @@ namespace eindopdracht
                     db.Add(new wetenschapper { naam = tbx_wetenschapper.Text });
                     cmb_naam_wetenschapper.Items.Add(tbx_wetenschapper.Text);
                     cmb_kiezen_naam_wetenschapper.Items.Add(tbx_wetenschapper.Text);
-                    tbx_wetenschapper.Clear();
                 }
+                tbx_wetenschapper.Clear();
                 db.SaveChanges();
                 lijst_refresh(lijst_wetenschappers);
             }
@@ -92,10 +91,11 @@ namespace eindopdracht
             using(var db = new ShopContext())
             {
                 db.Remove((wetenschapper)lijst_wetenschappers.SelectedItem);
+                cmb_naam_wetenschapper.Items.Remove(tbx_wetenschapper.Text);
+                cmb_kiezen_naam_wetenschapper.Items.Remove(tbx_wetenschapper.Text);
                 db.SaveChanges();
                 lijst_refresh(lijst_wetenschappers);
                 tbx_wetenschapper.Clear();
-
             }
         }
 
@@ -110,9 +110,12 @@ namespace eindopdracht
                 }
                 var w = (wetenschapper)lijst_wetenschappers.SelectedItem;
                 w.naam = tbx_wetenschapper.Text;
+                cmb_naam_wetenschapper.Items.Remove(w);
                 db.Update(w);
+
                 db.SaveChanges();
                 lijst_refresh(lijst_wetenschappers);
+                tbx_wetenschapper.Clear();
             }
         }
         public void lijst_refresh(ListBox gekozen_lijst)
@@ -205,12 +208,13 @@ namespace eindopdracht
             using(var db = new ShopContext())
             {
                 db.Remove((project)lijst_projecten.SelectedItem);
+                cmb_naam_project.Items.Remove(tbx_naam_project.Text);
+                cmb_kiezen_naam_project.Items.Remove(tbx_naam_project.Text);
                 db.SaveChanges();
                 tbx_naam_project.Clear();
                 tbx_aantal_uren.Clear();
                 lijst_refresh(lijst_projecten);
             }
-
         }
 
         private void update_project_Click(object sender, RoutedEventArgs e)
@@ -329,27 +333,35 @@ namespace eindopdracht
         {
             using (var db = new ShopContext())
             {
-                //wetenschappers id
-                var w = db.wetenschappers;
-                var id = w.Where(w => w.naam == cmb_kiezen_naam_wetenschapper.Text);
-                var id1 = id.Select(i => i.wetenschapper_id).First();
-                //project id
-                var p = db.projecten;
-                var p_id = p.Where(p => p.naam == cmb_kiezen_naam_project.Text);
-                var p_id1 = p_id.Select(i => i.project_id).First();
-
-                var toegewezenen_projecten = db.toegewezenen.ToList();
-                bool bestaat_al = toegewezenen.Exists(w => w.wetenschapper_id == id1 && w.project_id == p_id1);
-                //toevoegen toegewezenen
-                if (bestaat_al)
+                if (cmb_kiezen_naam_wetenschapper.Text == "" || cmb_kiezen_naam_project.Text == "")
                 {
-                    MessageBox.Show("heeft het project al.");
+                    MessageBox.Show("gelieven een wetenschapper EN een project te kiezen");
                 }
                 else
                 {
-                    db.Add(new toegewezenen { wetenschapper_id = id1, project_id = p_id1 });
-                    db.SaveChanges();
+                    var w = db.wetenschappers;
+                    var id = w.Where(w => w.naam == cmb_kiezen_naam_wetenschapper.Text);
+                    var id1 = id.Select(i => i.wetenschapper_id).First();
+                    //project id
+                    var p = db.projecten;
+                    var p_id = p.Where(p => p.naam == cmb_kiezen_naam_project.Text);
+                    var p_id1 = p_id.Select(i => i.project_id).First();
+
+                    var toegewezenen_projecten = db.toegewezenen.ToList();
+                    bool bestaat_al = toegewezenen.Exists(w => w.wetenschapper_id == id1 && w.project_id == p_id1);
+                    //toevoegen toegewezenen
+                    if (bestaat_al)
+                    {
+                        MessageBox.Show("heeft het project al.");
+                    }
+                    else
+                    {
+                        db.Add(new toegewezenen { wetenschapper_id = id1, project_id = p_id1 });
+                        db.SaveChanges();
+                    }
                 }
+                //wetenschappers id
+                
 
 
                 //update listbox
