@@ -277,6 +277,12 @@ namespace eindopdracht
                     var wetenschapper_identity = db.wetenschappers.Where(w => w.naam == cmb_naam_wetenschapper.SelectedItem.ToString()).First();
                     var wetenschapper_id1 = wetenschapper_identity.wetenschapper_id;
                     var wetenschapper_projecten = db.toegewezenen.Where(i => i.wetenschapper_id == wetenschapper_id1);
+                    foreach (var project in wetenschapper_projecten)
+                    {
+                        var assigned_project = db.projecten.Where(i => i.project_id == project.project_id).First().naam.ToString();
+                        lbx_wetnschapper_to_project.Items.Add(assigned_project);
+                    }
+                    db.SaveChanges();
                 }
             }
         }
