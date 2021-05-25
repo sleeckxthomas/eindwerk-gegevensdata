@@ -74,13 +74,17 @@ namespace eindopdracht
                 {
                     MessageBox.Show("wetenschapper bestaat al. gelieve eerste letter achternaam toe tevoegen.");
                 }
+                else if(tbx_wetenschapper.Text == "")
+                {
+                    MessageBox.Show("gelieven een wetenschapper in te geven");
+                }
                 else
                 {
                     db.Add(new wetenschapper { naam = tbx_wetenschapper.Text });
                     cmb_naam_wetenschapper.Items.Add(tbx_wetenschapper.Text);
                     cmb_kiezen_naam_wetenschapper.Items.Add(tbx_wetenschapper.Text);
+                    tbx_wetenschapper.Clear();
                 }
-                tbx_wetenschapper.Clear();
                 db.SaveChanges();
                 lijst_refresh(lijst_wetenschappers);
             }
@@ -90,12 +94,19 @@ namespace eindopdracht
         {
             using(var db = new ShopContext())
             {
-                db.Remove((wetenschapper)lijst_wetenschappers.SelectedItem);
-                cmb_naam_wetenschapper.Items.Remove(tbx_wetenschapper.Text);
-                cmb_kiezen_naam_wetenschapper.Items.Remove(tbx_wetenschapper.Text);
-                db.SaveChanges();
+                if(tbx_wetenschapper.Text == "")
+                {
+                    MessageBox.Show("gelieven een wetenschapper te selecteren");
+                }
+                else
+                {
+                    db.Remove((wetenschapper)lijst_wetenschappers.SelectedItem);
+                    cmb_naam_wetenschapper.Items.Remove(tbx_wetenschapper.Text);
+                    cmb_kiezen_naam_wetenschapper.Items.Remove(tbx_wetenschapper.Text);
+                    db.SaveChanges();
+                    tbx_wetenschapper.Clear();
+                }
                 lijst_refresh(lijst_wetenschappers);
-                tbx_wetenschapper.Clear();
             }
         }
 
@@ -108,6 +119,10 @@ namespace eindopdracht
                 {
                     MessageBox.Show("wetenschapper staat er al in. geef achternaam als extra");
                 }
+                else if(tbx_wetenschapper.Text == "")
+                {
+                    MessageBox.Show("gelieven een wetenschapper te selecteren");
+                }
                 else
                 {
                     var w = (wetenschapper)lijst_wetenschappers.SelectedItem;
@@ -115,10 +130,11 @@ namespace eindopdracht
                     cmb_naam_wetenschapper.SelectedItem = w;
                     db.Update(w);
                     db.SaveChanges();
+                    cmb_naam_wetenschapper.Items.Clear();
+                    cmb_kiezen_naam_wetenschapper.Items.Clear();
                 }
                 lijst_refresh(lijst_wetenschappers);
-                cmb_naam_wetenschapper.Items.Clear();
-                cmb_kiezen_naam_wetenschapper.Items.Clear();
+
                 foreach(var w in db.wetenschappers)
                 {
                     cmb_naam_wetenschapper.Items.Add(w.naam);
@@ -198,15 +214,20 @@ namespace eindopdracht
                 {
                     MessageBox.Show("project bestaat al.");
                 }
+                else if(tbx_naam_project.Text == "" || tbx_aantal_uren.Text == "")
+                {
+                    MessageBox.Show("gelieven project en aantal uren in te geven.");
+                }
                 else
                 {
                     db.Add(new project { naam = tbx_naam_project.Text, uur = float.Parse(tbx_aantal_uren.Text)});
                     cmb_naam_project.Items.Add(tbx_naam_project.Text);
                     cmb_kiezen_naam_project.Items.Add(tbx_naam_project.Text);
                     db.SaveChanges();
+                    tbx_naam_project.Clear();
+                    tbx_aantal_uren.Clear();
                 }
-                tbx_naam_project.Clear();
-                tbx_aantal_uren.Clear();
+
                 lijst_refresh(lijst_projecten);
             }
         }
@@ -215,12 +236,20 @@ namespace eindopdracht
         {
             using(var db = new ShopContext())
             {
-                db.Remove((project)lijst_projecten.SelectedItem);
-                cmb_naam_project.Items.Remove(tbx_naam_project.Text);
-                cmb_kiezen_naam_project.Items.Remove(tbx_naam_project.Text);
-                db.SaveChanges();
-                tbx_naam_project.Clear();
-                tbx_aantal_uren.Clear();
+                if(tbx_naam_project.Text == "")
+                {
+                    MessageBox.Show("gelieven project te selecteren.");
+                }
+                else
+                {
+                    db.Remove((project)lijst_projecten.SelectedItem);
+                    cmb_naam_project.Items.Remove(tbx_naam_project.Text);
+                    cmb_kiezen_naam_project.Items.Remove(tbx_naam_project.Text);
+                    db.SaveChanges();
+                    tbx_naam_project.Clear();
+                    tbx_aantal_uren.Clear();
+                }
+
                 lijst_refresh(lijst_projecten);
             }
         }
@@ -230,9 +259,13 @@ namespace eindopdracht
             using (var db =  new ShopContext())
             {
                 var p = (project)lijst_projecten.SelectedItem;
-                bool project_bestaat = projecten.Exists(p => p.naam == tbx_naam_project.Text && p.uur == float.Parse(tbx_aantal_uren.Text));
-                if (project_bestaat)
+                bool project_bestaat = projecten.Exists(p => p.naam == tbx_naam_project.Text);
+                if (tbx_naam_project.Text == "" || tbx_aantal_uren.Text == "")
                 {
+                    MessageBox.Show("gelieven project en aantal uren in te geven");
+                }
+                else if(project_bestaat)
+                {                 
                     MessageBox.Show("project bestaat al");
                 }
                 else
@@ -241,10 +274,11 @@ namespace eindopdracht
                     p.uur = float.Parse(tbx_aantal_uren.Text);
                     db.Update(p);
                     db.SaveChanges();
+                    lijst_refresh(lijst_projecten);
+                    cmb_naam_project.Items.Clear();
+                    cmb_kiezen_naam_project.Items.Clear();
                 }
-                lijst_refresh(lijst_projecten);
-                cmb_naam_project.Items.Clear();
-                cmb_kiezen_naam_project.Items.Clear();
+
                 foreach (var pro in db.projecten)
                 {
                     cmb_naam_project.Items.Add(pro.naam);
