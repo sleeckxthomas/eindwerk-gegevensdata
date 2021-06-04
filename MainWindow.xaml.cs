@@ -438,6 +438,7 @@ namespace eindopdracht
                     foreach (var project in wetenschapper_projecten)
                     {
                         var assignedproject = db.projecten.Where(i => i.project_id == project.project_id).First().naam.ToString();
+                        if (!lbx_wetnschapper_to_project.Items.Contains(assignedproject))
                         lbx_wetnschapper_to_project.Items.Add(assignedproject);
                     }
                 }
@@ -450,6 +451,7 @@ namespace eindopdracht
                     foreach (var wetenschapper in projecten_wetenschapper)
                     {
                         var assigned_wetenschapper = db.wetenschappers.Where(i => i.wetenschapper_id == wetenschapper.wetenschapper_id).First().naam.ToString();
+                        if(!lbx_project_to_wetenschapper.Items.Contains(assigned_wetenschapper))
                         lbx_project_to_wetenschapper.Items.Add(assigned_wetenschapper);
                     }
                 }
